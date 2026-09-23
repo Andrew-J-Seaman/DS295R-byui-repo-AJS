@@ -45,9 +45,13 @@ if not os.getenv("GEMINI_API_KEY"):
 # Copied from: 'https://docs.langchain.com/oss/python/langchain/overview'
 from langchain.agents import create_agent
 
+# Idea: Perhaps I could set up a function called `pull_weather_data` or something and provide to the tool as a function call it can use to pull the data for the user provided city (input) and restate the data as a more user-friendly output.
+
+from openmeteopy import openmeteopy
 
 def get_weather(city: str) -> str:
     """Get weather for a given city."""
+    weather = openmeteopy.get_weather(city)
     return f" {city}!"
 
 agent = create_agent(
