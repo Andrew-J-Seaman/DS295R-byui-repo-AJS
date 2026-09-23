@@ -45,9 +45,10 @@ if not os.getenv("GEMINI_API_KEY"):
 # Copied from: 'https://docs.langchain.com/oss/python/langchain/overview'
 from langchain.agents import create_agent
 
+
 def get_weather(city: str) -> str:
     """Get weather for a given city."""
-    return f"It's always sunny in {city}!"
+    return f" {city}!"
 
 agent = create_agent(
     model="google_genai:gemini-3.6-flash",
@@ -58,7 +59,7 @@ agent = create_agent(
 # (Line copied from `Example1_2.ipynb`)
 from langchain.messages import HumanMessage
 
-prompt = HumanMessage(content=input("City: "))
+prompt = HumanMessage(input("Input: "))
 
 result = agent.invoke(
     {"messages": [{f"role": "user", "content": "What's the weather in {prompt.content}?"}]}
