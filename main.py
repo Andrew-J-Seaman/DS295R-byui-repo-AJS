@@ -1,79 +1,40 @@
+# ---
 # DETAILS:
-#   title: AI Chatbot
+#   title: AI Agent
 #   author: Andrew Seamana
-#   date: 2026-09-23
-#
-#
+#   date: 2026-10-12
+# ---
+
+# Utils
+def format_insert(insert):
+    insert = insert.strip().lower()
+
+    if insert == "newline":
+         insert = "\n"
+    elif insert == "divider": 
+        insert = "—————"
+
+    print(insert)
 
 
 
-# Copied from: 'https://byuidatascience.github.io/agentic_ai_course/lessons/lesson1_4.html'
-# def get_response(prompt: str) -> str:
-#     return prompt
+# Import model
+from openai import OpenAI
 
-# def main():
-#     while True:
-#         try:
-#             prompt = input("Input: ")
-#             if prompt == "exit": break
-#             response = get_response(prompt)
-#         except EOFError:
-#             break
-#         print(response)
+client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")  # key can be anything
 
-# if __name__ == "__main__":
-#     main()
+# Print the exact model names the server knows about
+for m in client.models.list().data:
+    print(m.id)
 
+format_insert('newline')
 
-
-# Copied from: Took code (commented out) from `Example1_2.ipynb` and AI changed.
-#
-# import os
-# from google.colab import userdata
-# os.environ["GOOGLE_API_KEY"] = userdata.get("GOOGLE_API_KEY")
-#
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-if not os.getenv("GEMINI_API_KEY"):
-    raise RuntimeError("GOOGLE_API_KEY is not set")
-
-
-
-# Copied from: 'https://docs.langchain.com/oss/python/langchain/overview'
-from langchain.agents import create_agent
-
-# Idea: Perhaps I could set up a function called `pull_weather_data` or something and provide to the tool as a function call it can use to pull the data for the user provided city (input) and restate the data as a more user-friendly output.
-
-from openmeteopy import openmeteopy
-
-def get_weather(city: str) -> str:
-    """Get weather for a given city."""
-    weather = openmeteopy.get_weather(city)
-    return f" {city}!"
-
-agent = create_agent(
-    model="google_genai:gemini-3.6-flash",
-    tools=[get_weather],
-    system_prompt="You are a helpful assistant",
+response = client.chat.completions.create(
+    model="gemma-4-12b-uncensored",  # use the id printed above if it differs
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant. You reply very quickly unless the user specifies extra effort should be spent."},
+        {"role": "user", "content": "Explain why bottom-up-processing is very difficult for level 1 autistic a 25 year-old male when trying to learn AI Agent Engineering."},
+    ],
 )
-
-# (Line copied from `Example1_2.ipynb`)
-from langchain.messages import HumanMessage
-
-prompt = HumanMessage(input("Input: "))
-
-result = agent.invoke(
-    {"messages": [{f"role": "user", "content": "What's the weather in {prompt.content}?"}]}
-)
-
-# print(result["messages"][-1].content_blocks)
-print(result["messages"][-1].text) # swapped `.content_blocks` for `.text`
-
-
-
-
-
-
+print(response.choices[0].message.content)
+format_insert('divider')
